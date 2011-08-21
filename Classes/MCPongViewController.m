@@ -5,7 +5,7 @@
 #define TEST_BALL_COUNT 200
 
 // dampening per physics round
-#define DAMPENING 0.005  
+#define DAMPENING 0.01  
 
 @implementation MCPongViewController
 
@@ -15,7 +15,8 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 - (void)viewDidLoad 
 {
 	[super viewDidLoad];
-    wave = nil;
+    waves =  [[NSMutableArray alloc] init];
+	
 	balls =  [[NSMutableArray alloc] init];
 	
 	space = [[ChipmunkSpace alloc] init];
@@ -129,7 +130,9 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
     
 	[paddle1 updatePosition];
 	[paddle2 updatePosition];
-    [wave updatePosition];
+    for (Wave * wave in waves){
+        [wave updatePosition];
+    }
 	// Update ball positions to match the physics bodies
 	
 }
@@ -148,7 +151,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	[fpsLabel release];
 	[paddle1 release];
 	[paddle2 release];
-    [wave release];
+    [waves release];
 	[super dealloc];
 }
 
@@ -202,6 +205,9 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 		}
 		
 	}
+    [self addNewWave: cpv(point.x,point.y): cpv(-100,10)  ];
+    
+    
 }
 
 - (IBAction)addBallForReal;
@@ -228,14 +234,16 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 
 - (void)addNewWave:(cpVect)position :(cpVect)velocity;
 {
-	if (!wave) {
-		wave = [[Wave alloc] initWithPosition:position Velocity:velocity];	
-	}
+	
+    Wave *wave = [[Wave alloc] initWithPosition:position Velocity:velocity];	
+	
 	
 	// Add to view, physics space, our list
 	[self.view addSubview:wave.imageView];
-	//[waves addObject:wave];
+	[waves addObject:wave];
 	[space add:wave];
+    
+    [wave release];
 }
     
 - (void)createBounds {
