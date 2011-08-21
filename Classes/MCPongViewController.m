@@ -29,7 +29,16 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	// Collision handler for ball - border
 	[space addCollisionHandler:self
 						 typeA:[Ball class] typeB:borderType
-						 begin:@selector(beginWallCollision:space:)
+						 begin:@selector(beginBallWallCollision:space:)
+					  preSolve:nil
+					 postSolve:nil						
+					  separate:nil
+	 ];
+    
+    // Collision handler for Ball - Wave
+	[space addCollisionHandler:self
+						 typeA:[Ball class] typeB:[Wave class]
+						 begin:@selector(beginBallWaveCollision:space:)
 					  preSolve:nil
 					 postSolve:nil						
 					  separate:nil
@@ -49,9 +58,10 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
     [self addNewBall];
     
     // add new wave
+    cpVect paddleDimensions = cpv(2 * frame.size.height, 2 * frame.size.height);  // TODO: Wave should span entire screen
 	cpVect position = cpv(frame.size.width/2, frame.size.height/2);
 	cpVect velocity = cpvmult(cpv(frand_unit(), frand_unit()), 400.0f);
-    [self addNewWave:position :velocity];
+    [self addNewWave:position :paddleDimensions :velocity];
 	
 	// Setup FPS label
 	framesThisSecond = 0;
@@ -90,13 +100,20 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 }
 
 
-- (bool)beginWallCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
+- (bool)beginBallWallCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
 	CHIPMUNK_ARBITER_GET_SHAPES(arbiter, theBall, border);
 	
 	//Paddle * p = paddle.data;
-	return TRUE;
+    return TRUE;
 }
 
+- (bool)beginBallWaveCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
+	CHIPMUNK_ARBITER_GET_SHAPES(arbiter, theBall, theWave);
+	
+	//Paddle * p = paddle.data;
+    // TODO: Add velocity impulse from theWave to theBall
+	return FALSE;
+}
 
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -202,8 +219,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 		}
 		
 	}
-    [self addNewWave: cpv(point.x,point.y): cpv(-100,10)  ];
-    
+    [self addNewWave: cpv(point.x,point.y): cpv(100,10): cpv(5,0)];  // TODO: JMC: Replace third w/ sweep velocity
     
 }
 
@@ -237,11 +253,9 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	
 }
 
-- (void)addNewWave:(cpVect)position :(cpVect)velocity;
+- (void)addNewWave:(cpVect)position :(cpVect)dimensions :(cpVect)velocity;
 {
-	
-    Wave *wave = [[Wave alloc] initWithPosition:position Velocity:velocity];	
-	
+    Wave *wave = [[Wave alloc] initWithPosition:position Dimensions:dimensions Velocity:velocity];	
 	
 	// Add to view, physics space, our list
 	[self.view addSubview:wave.imageView];
@@ -285,7 +299,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	cpFloat dt = displayLink.duration * displayLink.frameInterval;
 	[space step:dt];
 	
-    bool displayLog=arc4random()%20<1;
+    bool displayLog = NO;
     
 	for (Ball *b in balls){
         [b updatePosition];
