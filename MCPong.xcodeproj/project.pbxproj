@@ -12,6 +12,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		212BD2931400FD6F0013ED5B /* wave.png in Resources */ = {isa = PBXBuildFile; fileRef = 212BD2921400FD6F0013ED5B /* wave.png */; };
+		21C17BCD14011D3800BE6D62 /* buoy.png in Resources */ = {isa = PBXBuildFile; fileRef = 21C17BCC14011D3800BE6D62 /* buoy.png */; };
 		230E722712C3C44D00114818 /* SimpleSound.m in Sources */ = {isa = PBXBuildFile; fileRef = 230E722512C3C44D00114818 /* SimpleSound.m */; };
 		230E723912C3C4DF00114818 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 230E723812C3C4DF00114818 /* OpenAL.framework */; };
 		230E724112C3C4FA00114818 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 230E724012C3C4FA00114818 /* AudioToolbox.framework */; };
@@ -39,6 +40,7 @@
 		1D6058910D05DD3D006BFB54 /* MCPong.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MCPong.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		212BD2921400FD6F0013ED5B /* wave.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wave.png; path = images/wave.png; sourceTree = "<group>"; };
+		21C17BCC14011D3800BE6D62 /* buoy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = buoy.png; path = images/buoy.png; sourceTree = "<group>"; };
 		230E722512C3C44D00114818 /* SimpleSound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleSound.m; sourceTree = "<group>"; };
 		230E722612C3C44D00114818 /* SimpleSound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleSound.h; sourceTree = "<group>"; };
 		230E723812C3C4DF00114818 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
@@ -265,6 +267,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				21C17BCC14011D3800BE6D62 /* buoy.png */,
 				212BD2921400FD6F0013ED5B /* wave.png */,
 				BD85A5571400B01200C2EFF2 /* 1.png */,
 				BD85A5581400B01200C2EFF2 /* 2.png */,
@@ -407,6 +410,7 @@
 				BD85A55F1400B01200C2EFF2 /* ball.png in Resources */,
 				BD85A5601400B01200C2EFF2 /* paddle.png in Resources */,
 				212BD2931400FD6F0013ED5B /* wave.png in Resources */,
+				21C17BCD14011D3800BE6D62 /* buoy.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,19 +7,21 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
 
 #import "ObjectiveChipmunk.h"
 
-@interface Wave : NSObject <ChipmunkObject>
+
+@interface Wave : UIView <ChipmunkObject>
 {
-	UIImageView *imageView;
 	
 	ChipmunkBody *body;
 	NSSet *chipmunkObjects;
+    float waveIntervalOffset;
 }
 
-@property (readonly) UIImageView *imageView;
 @property (readonly) NSSet *chipmunkObjects;
 - (id)initWithPosition:(cpVect)position Dimensions:(cpVect)dimensions Velocity:(cpVect)velocity;
+@property float waveIntervalOffset;
 - (void)updatePosition;
 @end

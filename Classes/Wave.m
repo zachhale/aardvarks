@@ -8,31 +8,61 @@
 
 #import "math.h"
 #import "Wave.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define ELASTICITY 1.0f
 #define FRICTION   0.0f
 #define MASS       1.0f
-#define THICKNESS  20.0f
+#define THICKNESSX  60.0f
+#define THICKNESSY  25.0f
+
+// seconds
+#define WAVEINTERVAL 2.0
+
 
 
 @implementation Wave
 
-@synthesize imageView;
 @synthesize chipmunkObjects;
+@synthesize waveIntervalOffset;
 
 - (void)updatePosition 
 {
 	// Sync ball positon with chipmunk body
-	imageView.transform = CGAffineTransformMakeTranslation(body.pos.x - THICKNESS, body.pos.y - THICKNESS);
+	self.transform=CGAffineTransformMakeTranslation(body.pos.x - THICKNESSX, body.pos.y - THICKNESSY);
+    
+    [self setNeedsDisplay];
+}
+
+- (void) drawRect: (CGRect)rect
+{    
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    CGContextBeginPath(ctx);
+        
+    CGContextSetLineWidth(ctx, 3);
+    
+    CGColorSpaceRef rgb = CGColorSpaceCreateDeviceRGB();
+    CGFloat comps[] = {.12, .14, .6, 1.0};
+    CGColorRef color = CGColorCreate(rgb, comps);
+    CGColorSpaceRelease(rgb);
+    
+    CGContextSetStrokeColorWithColor(ctx,color);
+    CGContextMoveToPoint(ctx, 0, THICKNESSY*.5);
+    
+    double waveMul=(fmodf(CACurrentMediaTime()+self.waveIntervalOffset,WAVEINTERVAL))/WAVEINTERVAL; 
+    
+    CGContextAddCurveToPoint(ctx, THICKNESSX/6.0,waveMul*THICKNESSY, THICKNESSX*2.0/6.0,(1.0-waveMul)*THICKNESSY, THICKNESSX*.5,THICKNESSY*.5);
+    CGContextAddCurveToPoint(ctx, THICKNESSX*4.0/6.0,waveMul*THICKNESSY, THICKNESSX*5.0/6.0,(1.0-waveMul)*THICKNESSY, THICKNESSX,THICKNESSY*.5);
+    
+    CGContextSetLineWidth(ctx, 2);
+    CGContextStrokePath(ctx);
+    
 }
 
 - (id)initWithPosition:(cpVect)position Dimensions:(cpVect)paddleDimensions Velocity:(cpVect)velocity
 {
 	if(self = [super init])
-	{
-		UIImage *image = [UIImage imageNamed:@"wave.png"];		
-		imageView = [[UIImageView alloc] initWithImage:image];
-		
+	{	
 		// Set up Chipmunk objects.
 		cpFloat mass = MASS;
 		
@@ -64,11 +94,16 @@
                         -1 * unitVel.x * verts[3].x + unitVel.y * verts[3].y);
 
 		cpFloat moment = cpMomentForPoly(mass, 3, rotVerts, position);
+        
+        self.frame=CGRectMake(60,60,60,60);
+        self.opaque=false;
+        arc4random_stir();
+        
+        self.waveIntervalOffset=fmod(arc4random(),WAVEINTERVAL);
 		
 		body = [[ChipmunkBody alloc] initWithMass:mass andMoment:moment];
 		body.pos = position;
 		body.vel = velocity;
-
 		ChipmunkPolyShape * shape = [ChipmunkPolyShape polyWithBody:body count:4 verts:rotVerts offset:position];
 
 		// So it will bounce forever
@@ -86,7 +121,6 @@
 
 - (void) dealloc
 {
-	[imageView release];
 	[body release];
 	[chipmunkObjects release];
 	

@@ -75,11 +75,16 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
     player1Score = 0;
     player2Score = 0;
     
-	player1ScoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, frame.size.width/2 - 10, 30)];
+	player1ScoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width / 2 - 50, 30)];
+    //player1ScoreLabel.transform = CGAffineTransformMakeRotation( M_PI/2 );
+    player1ScoreLabel.backgroundColor = [UIColor clearColor];
+    player1ScoreLabel.textAlignment = UITextAlignmentRight;
 	player1ScoreLabel.text = @"Player 1: 0";
 	[self.view addSubview:player1ScoreLabel];
 
-	player2ScoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width/2 + 10, 0, frame.size.width/2 - 10, 30)];
+	player2ScoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width / 2 + 50, 0, frame.size.width / 2 - 50, 30)];
+    //player2ScoreLabel.transform = CGAffineTransformMakeRotation( M_PI/2 );
+    player2ScoreLabel.backgroundColor = [UIColor clearColor];
 	player2ScoreLabel.text = @"Player 2: 0";
 	[self.view addSubview:player2ScoreLabel];
 }
@@ -219,8 +224,8 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 		}
 		
 	}
-    [self addNewWave: cpv(point.x,point.y): cpv(100,10): cpv(5,0)];  // TODO: JMC: Replace third w/ sweep velocity
-    
+    // TODO: JMC: Replace third w/ sweep velocity
+    [self addNewWave: cpv(point.x,point.y): cpv(100,10): cpv(0,fmod( arc4random(),300)-150.0)];
 }
 
 - (IBAction)addBallForReal;
@@ -236,7 +241,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
     CGRect frame = self.view.frame;
 
     cpVect position = cpv(frame.size.width/2, frame.size.height/2);
-	cpVect velocity = cpvmult(cpv(frand_unit(), frand_unit()), 400.0f);
+	cpVect velocity = cpvmult(cpv(frand_unit(), frand_unit()), 1000.0f);
 	[self addNewBall:position :velocity];
 }
 
@@ -258,7 +263,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
     Wave *wave = [[Wave alloc] initWithPosition:position Dimensions:dimensions Velocity:velocity];	
 	
 	// Add to view, physics space, our list
-	[self.view addSubview:wave.imageView];
+	[self.view addSubview:wave];
 	[waves addObject:wave];
 	[space add:wave];
     
