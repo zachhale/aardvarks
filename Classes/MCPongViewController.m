@@ -2,10 +2,12 @@
 #import "SimpleSound.h"
 #import "chipmunk.h"
 
+#define DAMPENING 0.01  // dampening per physics round
+#define PADDLE_WIDTH 110.0
+#define PADDLE_HEIGHT 32.0
+#define PADDLE1_Y 68.0
+#define PADDLE2_Y 940.0
 #define TEST_BALL_COUNT 200
-
-// dampening per physics round
-#define DAMPENING 0.01  
 
 @implementation MCPongViewController
 
@@ -31,24 +33,24 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 						 typeA:[Ball class] typeB:borderType
 						 begin:@selector(beginBallWallCollision:space:)
 					  preSolve:nil
-					 postSolve:nil						
+					 postSolve:@selector(postSolveCollision:space:)			
 					  separate:nil
 	 ];
     
     // Collision handler for Ball - Wave
 	[space addCollisionHandler:self
 						 typeA:[Ball class] typeB:[Wave class]
-						 begin:@selector(beginBallWaveCollision:space:)
+						 begin:nil // @selector(beginBallWaveCollision:space:)
 					  preSolve:nil
 					 postSolve:nil						
-					  separate:nil
+					  separate:@selector(separateBallWaveCollision:space:)
 	 ];
 	
-	paddle1 = [[Paddle alloc] initWithPosition:cpv(368.0,68.0) Dimensions:cpv(110.0, 32.0)];
+	paddle1 = [[Paddle alloc] initWithPosition:cpv(368.0, PADDLE1_Y) Dimensions:cpv(PADDLE_WIDTH, PADDLE_HEIGHT)];
 	[self.view addSubview:paddle1.imageView];
 	[space add:paddle1];
 	
-	paddle2 = [[Paddle alloc] initWithPosition:cpv(368.0,940.0) Dimensions:cpv(110.0, 32.0)];
+	paddle2 = [[Paddle alloc] initWithPosition:cpv(368.0,PADDLE2_Y) Dimensions:cpv(PADDLE_WIDTH, PADDLE_HEIGHT)];
 	[self.view addSubview:paddle2.imageView];
 	[space add:paddle2];
 
@@ -58,10 +60,10 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
     [self addNewBall];
     
     // add new wave
-    cpVect paddleDimensions = cpv(2 * frame.size.height, 2 * frame.size.height);  // TODO: Wave should span entire screen
+    cpVect waveDims = cpv(2 * frame.size.height, 1);  // TODO: Wave should stretch across entire screen
 	cpVect position = cpv(frame.size.width/2, frame.size.height/2);
 	cpVect velocity = cpvmult(cpv(frand_unit(), frand_unit()), 400.0f);
-    [self addNewWave:position :paddleDimensions :velocity];
+    [self addNewWave:position :waveDims :velocity];
 	
 	// Setup FPS label
 	framesThisSecond = 0;
@@ -104,20 +106,27 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	}
 }
 
-
 - (bool)beginBallWallCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
 	CHIPMUNK_ARBITER_GET_SHAPES(arbiter, theBall, border);
 	
-	//Paddle * p = paddle.data;
     return TRUE;
 }
 
-- (bool)beginBallWaveCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
+// - (bool)beginBallWaveCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
+//	CHIPMUNK_ARBITER_GET_SHAPES(arbiter, theBall, theWave);
+//
+//	return FALSE;
+// }
+
+- (bool)separateBallWaveCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
 	CHIPMUNK_ARBITER_GET_SHAPES(arbiter, theBall, theWave);
 	
 	//Paddle * p = paddle.data;
-    // TODO: Add velocity impulse from theWave to theBall
-	return FALSE;
+    float PERCENTAGE_VELOCITY_TRANSFER = 0.5f;
+    cpVect waveVel = cpv(0.0, 0.0);  // theWave.velocity
+    cpVect ballVel = cpv(0.0, 0.0);  // theBall.velocity
+    theBall.body.vel = cpvadd(theBall.body.vel, cpvmult(cpvsub(waveVel, ballVel), PERCENTAGE_VELOCITY_TRANSFER));
+	return TRUE;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -183,13 +192,13 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	for(UITouch * touch in [touches allObjects])
 	{
 		point = [touch locationInView:self.view];
-		if (point.y > self.view.frame.size.height/2.0f) {
-			paddle2.body.pos = cpv(point.x, paddle2.body.pos.y);
-		}
-		else {
+        // Note: Former boundary was middle of court: self.view.frame.size.height/2.0f
+		if (point.y < PADDLE1_Y + PADDLE_HEIGHT) {
 			paddle1.body.pos = cpv(point.x, paddle1.body.pos.y);
 		}
-		
+		else if (point.y > PADDLE2_Y - PADDLE_HEIGHT) {
+			paddle2.body.pos = cpv(point.x, paddle2.body.pos.y);
+		}
 	}
 }
 
@@ -199,11 +208,12 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	for(UITouch * touch in [touches allObjects])
 	{
 		point = [touch locationInView:self.view];
-		if (point.y > self.view.frame.size.height/2.0f) {
-			paddle2.body.pos = cpv(point.x, paddle2.body.pos.y);
-		}
-		else {
+        // Note: Former boundary was middle of court: self.view.frame.size.height/2.0f 
+		if (point.y < PADDLE1_Y + PADDLE_HEIGHT) {
 			paddle1.body.pos = cpv(point.x, paddle1.body.pos.y);
+		}
+		else if (point.y > PADDLE2_Y - PADDLE_HEIGHT) {
+			paddle2.body.pos = cpv(point.x, paddle2.body.pos.y);
 		}
 
 	}
@@ -216,16 +226,21 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	for(UITouch * touch in [touches allObjects])
 	{
 		point = [touch locationInView:self.view];
-		if (point.y > self.view.frame.size.height/2.0f) {
-			paddle2.body.pos = cpv(point.x, paddle2.body.pos.y);
-		}
-		else {
+        // Note: Former boundary was middle of court: self.view.frame.size.height/2.0f 
+		if (point.y < PADDLE1_Y + PADDLE_HEIGHT) {
 			paddle1.body.pos = cpv(point.x, paddle1.body.pos.y);
 		}
-		
+		else if (point.y > PADDLE2_Y - PADDLE_HEIGHT) {
+			paddle2.body.pos = cpv(point.x, paddle2.body.pos.y);
+		} else {
+            // TODO: Replace third argument below with sweep velocity
+            cpVect prevPoint = [touch previousLocationInView:self.view];
+            cpVect velocity = cpvsub(point, prevPoint);
+            
+            // Previously, velocity was random: 3rd arg was: cpv(0,fmod( arc4random(),300)-150.0)];
+            [self addNewWave: cpv(point.x,point.y): cpv(100,2): velocity];
+        }
 	}
-    // TODO: JMC: Replace third w/ sweep velocity
-    [self addNewWave: cpv(point.x,point.y): cpv(100,10): cpv(0,fmod( arc4random(),300)-150.0)];
 }
 
 - (IBAction)addBallForReal;
