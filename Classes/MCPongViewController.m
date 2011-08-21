@@ -12,7 +12,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 - (void)viewDidLoad 
 {
 	[super viewDidLoad];
-	ball = nil;
+	balls =  [[NSMutableArray alloc] init];
 	
 	space = [[ChipmunkSpace alloc] init];
     
@@ -115,7 +115,17 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	cpFloat dt = displayLink.duration * displayLink.frameInterval;
 	[space step:dt];
 	
-	[ball updatePosition];
+    int x=0;
+    bool displayLog=arc4random()%20<1;
+    
+	for (Ball *b in balls){
+        [b updatePosition];
+        if (displayLog){
+        NSLog(@"ball %d  xy=%f %f",x, b.body.pos.x, b.body.pos.y);
+        x++;
+        }
+    }
+    
 	[paddle1 updatePosition];
 	[paddle2 updatePosition];
 	// Update ball positions to match the physics bodies
@@ -131,7 +141,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 
 - (void)dealloc 
 {
-	[ball release];
+	[balls release];
 	[space release];
 	[fpsLabel release];
 	[paddle1 release];
@@ -191,17 +201,26 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	}
 }
 
+- (IBAction)addBallForReal;
+{
+    
+    NSLog(@"New Ball");
+    
+    [self addNewBall:cpv(300.0,300.0): cpv(fmod(arc4random(),300)-150.0,fmod( arc4random(),300)-150.0)];
+    
+}
+
 - (void)addNewBall:(cpVect)position :(cpVect)velocity;
 {
-	if (!ball) {
-		ball = [[Ball alloc] initWithPosition:position Velocity:velocity];	
-	}
+	
+    Ball *ball=[[Ball alloc] initWithPosition:position Velocity:velocity];
 	
 	// Add to view, physics space, our list
 	[self.view addSubview:ball.imageView];
-	//[balls addObject:ball];
+    [balls addObject: ball];    
 	[space add:ball];
-		
+	[ball release];
+	
 }
 
 - (void)createBounds {

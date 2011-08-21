@@ -11,7 +11,7 @@
 	
 	IBOutlet UIImageView * scoreImageView;
 	ChipmunkSpace *space;
-	Ball *ball;
+    NSMutableArray *balls;
 	
 	CGPoint touchStart;
 	
@@ -26,5 +26,7 @@
 
 - (void)addNewBall:(cpVect)position :(cpVect)velocity;
 - (void)createBounds;
+
+- (IBAction)addBallForReal;
 
 @end
