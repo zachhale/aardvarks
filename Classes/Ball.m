@@ -12,6 +12,10 @@
 {
 	// Sync ball positon with chipmunk body
 	imageView.transform = CGAffineTransformMakeTranslation(body.pos.x - RADIUS, body.pos.y - RADIUS);
+
+    // apply some random forces
+    [body applyForce:cpv(fmod(arc4random(),2.0),fmod(arc4random(),.5)) offset:cpv(0,0)];
+    
 }
 
 - (id)initWithPosition:(cpVect)position Velocity:(cpVect)velocity
