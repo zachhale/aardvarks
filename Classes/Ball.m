@@ -6,6 +6,7 @@
 
 @synthesize imageView;
 @synthesize chipmunkObjects;
+@synthesize body;
 
 - (void)updatePosition 
 {
@@ -56,6 +57,7 @@
 	[chipmunkObjects release];
 	
 	[super dealloc];
+    
 }
 
 @end

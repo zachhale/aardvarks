@@ -12,8 +12,10 @@
 	
 	IBOutlet UIImageView * scoreImageView;
 	ChipmunkSpace *space;
-	Ball *ball;
+	// Ball *ball;
     Wave *wave;
+    NSMutableArray *balls;
+
 	
 	CGPoint touchStart;
 	
@@ -28,5 +30,8 @@
 
 - (void)addNewBall:(cpVect)position :(cpVect)velocity;
 - (void)addNewWave:(cpVect)position :(cpVect)velocity;
+- (void)createBounds;
+
+- (IBAction)addBallForReal;
 
 @end
