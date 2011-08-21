@@ -15,12 +15,8 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 - (void)viewDidLoad 
 {
 	[super viewDidLoad];
-<<<<<<< HEAD
-	ball = nil;
     wave = nil;
-=======
 	balls =  [[NSMutableArray alloc] init];
->>>>>>> 9a3d6d138cfeac34edd144e00189111ccd37cd30
 	
 	space = [[ChipmunkSpace alloc] init];
     
@@ -240,6 +236,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	[self.view addSubview:wave.imageView];
 	//[waves addObject:wave];
 	[space add:wave];
+}
     
 - (void)createBounds {
 	CGRect frame = self.view.frame;
