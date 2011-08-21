@@ -20,8 +20,6 @@
 
 @property (readonly) UIImageView *imageView;
 @property (readonly) NSSet *chipmunkObjects;
-
-- (id)initWithPosition:(cpVect)position Velocity:(cpVect)velocity;
-
+- (id)initWithPosition:(cpVect)position Dimensions:(cpVect)dimensions Velocity:(cpVect)velocity;
 - (void)updatePosition;
 @end
