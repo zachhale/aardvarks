@@ -65,11 +65,16 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
     player1Score = 0;
     player2Score = 0;
     
-	player1ScoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, frame.size.width/2 - 10, 30)];
+	player1ScoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width / 2 - 50, 30)];
+    //player1ScoreLabel.transform = CGAffineTransformMakeRotation( M_PI/2 );
+    player1ScoreLabel.backgroundColor = [UIColor clearColor];
+    player1ScoreLabel.textAlignment = UITextAlignmentRight;
 	player1ScoreLabel.text = @"Player 1: 0";
 	[self.view addSubview:player1ScoreLabel];
 
-	player2ScoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width/2 + 10, 0, frame.size.width/2 - 10, 30)];
+	player2ScoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width / 2 + 50, 0, frame.size.width / 2 - 50, 30)];
+    //player2ScoreLabel.transform = CGAffineTransformMakeRotation( M_PI/2 );
+    player2ScoreLabel.backgroundColor = [UIColor clearColor];
 	player2ScoreLabel.text = @"Player 2: 0";
 	[self.view addSubview:player2ScoreLabel];
 }
