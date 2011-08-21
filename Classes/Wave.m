@@ -34,7 +34,7 @@
     CGContextSetLineWidth(ctx, 3);
     
     CGColorSpaceRef rgb = CGColorSpaceCreateDeviceRGB();
-    CGFloat comps[] = {.1, .4, .9, .5};
+    CGFloat comps[] = {.12, .14, .6, 1.0};
     CGColorRef color = CGColorCreate(rgb, comps);
     CGColorSpaceRelease(rgb);
     
