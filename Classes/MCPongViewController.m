@@ -15,6 +15,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 - (void)viewDidLoad 
 {
 	[super viewDidLoad];
+    wave = nil;
 	balls =  [[NSMutableArray alloc] init];
 	
 	space = [[ChipmunkSpace alloc] init];
@@ -43,8 +44,13 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 
     CGRect frame = self.view.frame;
     
+    // add new ball
     [self addNewBall];
-
+    
+    // add new wave
+	cpVect position = cpv(frame.size.width/2, frame.size.height/2);
+	cpVect velocity = cpvmult(cpv(frand_unit(), frand_unit()), 400.0f);
+    [self addNewWave:position :velocity];
 	
 	// Setup FPS label
 	framesThisSecond = 0;
@@ -122,7 +128,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 		}
 	}
     
-	[self updatePositions];
+    [self updatePositions];
 }
 
 - (void)viewDidDisappear:(BOOL)animated 
@@ -141,6 +147,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	[paddle2 release];
     [player1ScoreLabel release];
     [player2ScoreLabel release];
+    [wave release];
 	[super dealloc];
 }
 
@@ -226,6 +233,18 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	
 }
 
+- (void)addNewWave:(cpVect)position :(cpVect)velocity;
+{
+	if (!wave) {
+		wave = [[Wave alloc] initWithPosition:position Velocity:velocity];	
+	}
+	
+	// Add to view, physics space, our list
+	[self.view addSubview:wave.imageView];
+	//[waves addObject:wave];
+	[space add:wave];
+}
+    
 - (void)createBounds {
 	CGRect frame = self.view.frame;
     cpFloat radius = 10.0;
@@ -290,6 +309,8 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	// Update ball positions to match the physics bodies
 	[paddle1 updatePosition];
 	[paddle2 updatePosition];
+    
+    [wave updatePosition];
 }
 
 - (void)incrementPlayer1Score {

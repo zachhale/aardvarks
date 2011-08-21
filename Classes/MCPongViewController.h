@@ -4,6 +4,7 @@
 #import "Ball.h"
 #import "ObjectiveChipmunk.h"
 #import "Paddle.h"
+#import "Wave.h"
 
 @interface MCPongViewController : UIViewController 
 {
@@ -11,7 +12,10 @@
 	
 	IBOutlet UIImageView * scoreImageView;
 	ChipmunkSpace *space;
+	// Ball *ball;
+    Wave *wave;
     NSMutableArray *balls;
+
 	
 	CGPoint touchStart;
 	
@@ -30,6 +34,7 @@
 }
 
 - (void)addNewBall:(cpVect)position :(cpVect)velocity;
+- (void)addNewWave:(cpVect)position :(cpVect)velocity;
 - (void)createBounds;
 
 - (IBAction)addBallForReal;
