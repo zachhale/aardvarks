@@ -13,7 +13,7 @@
 	IBOutlet UIImageView * scoreImageView;
 	ChipmunkSpace *space;
 	// Ball *ball;
-    Wave *wave;
+    NSMutableArray *waves;
     NSMutableArray *balls;
 
 	
