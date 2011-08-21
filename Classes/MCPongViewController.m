@@ -2,7 +2,7 @@
 #import "SimpleSound.h"
 #import "chipmunk.h"
 
-#define DAMPENING 0.01  // dampening per physics round
+#define DAMPENING 0.005  // dampening per physics round
 #define PADDLE_WIDTH 110.0
 #define PADDLE_HEIGHT 32.0
 #define PADDLE1_Y 68.0
@@ -72,20 +72,25 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	fpsLabel.text = @"0 FPS";
 	[self.view addSubview:fpsLabel];
 	
-
     // setup intitial scores
     player1Score = 0;
     player2Score = 0;
     
 	player1ScoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width / 2 - 50, 30)];
-    //player1ScoreLabel.transform = CGAffineTransformMakeRotation( M_PI/2 );
+    player1ScoreLabel.transform = CGAffineTransformConcat(
+                                                          CGAffineTransformMakeRotation(M_PI/2),
+                                                          CGAffineTransformMakeTranslation(-140, 0)
+                                                          );
     player1ScoreLabel.backgroundColor = [UIColor clearColor];
     player1ScoreLabel.textAlignment = UITextAlignmentRight;
 	player1ScoreLabel.text = @"Player 1: 0";
 	[self.view addSubview:player1ScoreLabel];
 
 	player2ScoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width / 2 + 50, 0, frame.size.width / 2 - 50, 30)];
-    //player2ScoreLabel.transform = CGAffineTransformMakeRotation( M_PI/2 );
+    player2ScoreLabel.transform = CGAffineTransformConcat(
+                                                          CGAffineTransformMakeRotation(-1.0 * M_PI/2),
+                                                          CGAffineTransformMakeTranslation(140,725)
+                                                          );
     player2ScoreLabel.backgroundColor = [UIColor clearColor];
 	player2ScoreLabel.text = @"Player 2: 0";
 	[self.view addSubview:player2ScoreLabel];
@@ -111,12 +116,6 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	
     return TRUE;
 }
-
-// - (bool)beginBallWaveCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
-//	CHIPMUNK_ARBITER_GET_SHAPES(arbiter, theBall, theWave);
-//
-//	return FALSE;
-// }
 
 - (bool)separateBallWaveCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
 	CHIPMUNK_ARBITER_GET_SHAPES(arbiter, theBall, theWave);
