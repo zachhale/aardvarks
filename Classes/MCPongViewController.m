@@ -12,6 +12,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 {
 	[super viewDidLoad];
 	ball = nil;
+    wave = nil;
 	
 	space = [[ChipmunkSpace alloc] init];
     
@@ -37,13 +38,13 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	paddle2 = [[Paddle alloc] initWithPosition:cpv(368.0,940.0) Dimensions:cpv(110.0, 32.0)];
 	[self.view addSubview:paddle2.imageView];
 	[space add:paddle2];
-
-	
+    
 	CGRect frame = self.view.frame;
 	
 	cpVect position = cpv(rand() % (int)frame.size.width, rand() % (int)frame.size.height);
 	cpVect velocity = cpvmult(cpv(frand_unit(), frand_unit()), 400.0f);
 	[self addNewBall:position :velocity];
+    [self addNewWave:position :velocity];
 	
 	
 	// Setup FPS label
@@ -52,8 +53,6 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	fpsLabel = [[UILabel alloc] initWithFrame:labelRect];
 	fpsLabel.text = @"0 FPS";
 	[self.view addSubview:fpsLabel];
-	
-
 }
 
 - (void)postSolveCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space 
@@ -118,6 +117,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	[ball updatePosition];
 	[paddle1 updatePosition];
 	[paddle2 updatePosition];
+    [wave updatePosition];
 	// Update ball positions to match the physics bodies
 	
 }
@@ -136,6 +136,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	[fpsLabel release];
 	[paddle1 release];
 	[paddle2 release];
+    [wave release];
 	[super dealloc];
 }
 
@@ -204,5 +205,17 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 		
 }
 
+- (void)addNewWave:(cpVect)position :(cpVect)velocity;
+{
+	if (!wave) {
+		wave = [[Wave alloc] initWithPosition:position Velocity:velocity];	
+	}
+	
+	// Add to view, physics space, our list
+	[self.view addSubview:wave.imageView];
+	//[waves addObject:wave];
+	[space add:wave];
+    
+}
 
 @end
