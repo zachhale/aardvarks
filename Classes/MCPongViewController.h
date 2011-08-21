@@ -35,7 +35,7 @@
 
 - (void)addNewBall;
 - (void)addNewBall:(cpVect)position :(cpVect)velocity;
-- (void)addNewWave:(cpVect)position :(cpVect)velocity;
+- (void)addNewWave:(cpVect)position :(cpVect)paddleDimensions :(cpVect)velocity;
 - (void)createBounds;
 - (void)incrementPlayer1Score;
 - (void)incrementPlayer2Score;
