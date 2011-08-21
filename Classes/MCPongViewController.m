@@ -207,7 +207,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 		}
 		
 	}
-    [self addNewWave: cpv(point.x,point.y): cpv(-100,10)  ];
+    [self addNewWave: cpv(point.x,point.y): cpv(0,fmod( arc4random(),300)-150.0)  ];
     
     
 }
@@ -249,7 +249,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	
 	
 	// Add to view, physics space, our list
-	[self.view addSubview:wave.imageView];
+	[self.view addSubview:wave];
 	[waves addObject:wave];
 	[space add:wave];
     

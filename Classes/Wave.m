@@ -7,6 +7,7 @@
 //
 
 #import "Wave.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define ELASTICITY 1.0f
 #define FRICTION   0.0f
@@ -15,22 +16,42 @@
 
 @implementation Wave
 
-@synthesize imageView;
 @synthesize chipmunkObjects;
 
 - (void)updatePosition 
 {
 	// Sync ball positon with chipmunk body
-	imageView.transform = CGAffineTransformMakeTranslation(body.pos.x - THICKNESS, body.pos.y - THICKNESS);
+	self.transform=CGAffineTransformMakeTranslation(body.pos.x - THICKNESS, body.pos.y - THICKNESS);
 }
+
+- (void) drawRect: (CGRect)rect
+{    
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    CGContextBeginPath(ctx);
+        
+    CGContextSetLineWidth(ctx, 3);
+    
+    CGColorSpaceRef rgb = CGColorSpaceCreateDeviceRGB();
+    CGFloat comps[] = {.1, .4, .9, .5};
+    CGColorRef color = CGColorCreate(rgb, comps);
+    CGColorSpaceRelease(rgb);
+    
+    CGContextSetStrokeColorWithColor(ctx,color);
+    CGContextMoveToPoint(ctx, 0, 30);
+    
+    CGContextAddCurveToPoint(ctx, 10,45, 20,15, 30,30);
+    CGContextAddCurveToPoint(ctx, 40,45, 50,15, 60,30);
+    
+    CGContextSetLineWidth(ctx, 2);
+    CGContextStrokePath(ctx);
+    
+}
+
 
 - (id)initWithPosition:(cpVect)position Velocity:(cpVect)velocity
 {
 	if(self = [super init])
-	{
-		UIImage *image = [UIImage imageNamed:@"wave.png"];		
-		imageView = [[UIImageView alloc] initWithImage:image];
-		
+	{	
 		// Set up Chipmunk objects.
 		cpFloat mass = MASS;
 		
@@ -38,6 +59,9 @@
 		cpVect offset;
 		offset.x = 0;
 		offset.y = 0;
+        
+        self.frame=CGRectMake(60,60,60,60);
+        self.opaque=false;
 		
 		cpFloat moment = cpMomentForCircle(mass, 0, THICKNESS, offset);
 		
@@ -62,7 +86,6 @@
 
 - (void) dealloc
 {
-	[imageView release];
 	[body release];
 	[chipmunkObjects release];
 	
