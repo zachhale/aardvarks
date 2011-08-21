@@ -7,10 +7,10 @@
 @synthesize chipmunkObjects;
 @synthesize body;
 
+#define MASS 9999999.0f
 - (void)updatePosition 
 {
 	// Sync ball positon with chipmunk body
-	//imageView.transform = CGAffineTransformMakeTranslation(body.pos.x - RADIUS, body.pos.y - RADIUS);
 	imageView.transform = CGAffineTransformMakeTranslation(body.pos.x - offset.x, body.pos.y - offset.y);
 }
 
@@ -25,9 +25,8 @@
 		
 		// Set up Chipmunk objects.
 		
-		body = [[ChipmunkBody alloc] initStaticBody];		
-		//cpFloat mass = 999999.0f;
-		body.mass = 9999999.0;;
+		body = [[ChipmunkBody alloc] initStaticBody];
+		body.mass = MASS;
 
 		ChipmunkPolyShape * shape =  [ChipmunkPolyShape boxWithBody:body width:dimensions.x height:dimensions.y];
 	
