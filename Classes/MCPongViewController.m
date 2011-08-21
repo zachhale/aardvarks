@@ -4,6 +4,9 @@
 
 #define TEST_BALL_COUNT 200
 
+// dampening per physics round
+#define DAMPENING 0.005  
+
 @implementation MCPongViewController
 
 static NSString *borderType = @"borderType";
@@ -115,15 +118,14 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	cpFloat dt = displayLink.duration * displayLink.frameInterval;
 	[space step:dt];
 	
-    int x=0;
     bool displayLog=arc4random()%20<1;
     
 	for (Ball *b in balls){
         [b updatePosition];
         if (displayLog){
-        NSLog(@"ball %d  xy=%f %f",x, b.body.pos.x, b.body.pos.y);
-        x++;
+        //NSLog(@"ball %d  xy=%f %f",x, b.body.pos.x, b.body.pos.y);
         }
+        b.body.vel=cpvmult(b.body.vel,1-DAMPENING);
     }
     
 	[paddle1 updatePosition];
