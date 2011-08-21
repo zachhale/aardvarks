@@ -8,7 +8,7 @@
 @synthesize chipmunkObjects;
 @synthesize body;
 
-- (void)updatePosition 
+- (void)updatePosition
 {
 	// Sync ball positon with chipmunk body
 	imageView.transform = CGAffineTransformMakeTranslation(body.pos.x - RADIUS, body.pos.y - RADIUS);

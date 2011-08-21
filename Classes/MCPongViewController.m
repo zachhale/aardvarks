@@ -41,13 +41,10 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	[self.view addSubview:paddle2.imageView];
 	[space add:paddle2];
 
-	
-	CGRect frame = self.view.frame;
-	
-	cpVect position = cpv(frame.size.width/2, frame.size.height/2);
-	cpVect velocity = cpvmult(cpv(frand_unit(), frand_unit()), 400.0f);
-	[self addNewBall:position :velocity];
-	
+    CGRect frame = self.view.frame;
+    
+    [self addNewBall];
+
 	
 	// Setup FPS label
 	framesThisSecond = 0;
@@ -57,6 +54,17 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	[self.view addSubview:fpsLabel];
 	
 
+    // setup intitial scores
+    player1Score = 0;
+    player2Score = 0;
+    
+	player1ScoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, frame.size.width/2 - 10, 30)];
+	player1ScoreLabel.text = @"Player 1: 0";
+	[self.view addSubview:player1ScoreLabel];
+
+	player2ScoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width/2 + 10, 0, frame.size.width/2 - 10, 30)];
+	player2ScoreLabel.text = @"Player 2: 0";
+	[self.view addSubview:player2ScoreLabel];
 }
 
 - (void)postSolveCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space 
@@ -113,25 +121,8 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 			framesThisSecond = 0;
 		}
 	}
-
-	// Update Physics space
-	cpFloat dt = displayLink.duration * displayLink.frameInterval;
-	[space step:dt];
-	
-    bool displayLog=arc4random()%20<1;
     
-	for (Ball *b in balls){
-        [b updatePosition];
-        if (displayLog){
-        //NSLog(@"ball %d  xy=%f %f",x, b.body.pos.x, b.body.pos.y);
-        }
-        b.body.vel=cpvmult(b.body.vel,1-DAMPENING);
-    }
-    
-	[paddle1 updatePosition];
-	[paddle2 updatePosition];
-	// Update ball positions to match the physics bodies
-	
+	[self updatePositions];
 }
 
 - (void)viewDidDisappear:(BOOL)animated 
@@ -148,6 +139,8 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	[fpsLabel release];
 	[paddle1 release];
 	[paddle2 release];
+    [player1ScoreLabel release];
+    [player2ScoreLabel release];
 	[super dealloc];
 }
 
@@ -212,6 +205,14 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
     
 }
 
+- (void)addNewBall {
+    CGRect frame = self.view.frame;
+
+    cpVect position = cpv(frame.size.width/2, frame.size.height/2);
+	cpVect velocity = cpvmult(cpv(frand_unit(), frand_unit()), 400.0f);
+	[self addNewBall:position :velocity];
+}
+
 - (void)addNewBall:(cpVect)position :(cpVect)velocity;
 {
 	
@@ -250,6 +251,57 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
     rightSegment.friction = 0.0f;
     [space addStaticShape:rightSegment];
     [rightBody release];
+}
+
+- (void)updatePositions {
+	CGRect frame = self.view.frame;
+
+    // Update Physics space
+	cpFloat dt = displayLink.duration * displayLink.frameInterval;
+	[space step:dt];
+	
+    bool displayLog=arc4random()%20<1;
+    
+	for (Ball *b in balls){
+        [b updatePosition];
+        
+        if (displayLog){
+            //NSLog(@"ball %d  xy=%f %f",x, b.body.pos.x, b.body.pos.y);
+        }
+
+        // score based on ball position
+        if (b.body.pos.y > frame.size.height) {
+            [self incrementPlayer2Score];
+            [b.imageView removeFromSuperview];
+            [space remove:b];
+            [balls removeObject:b];
+            [self addNewBall];
+        } else if (b.body.pos.y < 0) {
+            [self incrementPlayer1Score];
+            [b.imageView removeFromSuperview];
+            [space remove:b];
+            [balls removeObject:b];
+            [self addNewBall];
+        } else {
+            b.body.vel=cpvmult(b.body.vel,1-DAMPENING);
+        }
+    }
+    
+	// Update ball positions to match the physics bodies
+	[paddle1 updatePosition];
+	[paddle2 updatePosition];
+}
+
+- (void)incrementPlayer1Score {
+    player1Score = player1Score + 1;
+    NSString *str = [NSString stringWithFormat:@"Player 1: %d", player1Score];
+    player1ScoreLabel.text = str;
+}
+
+- (void)incrementPlayer2Score {
+    player2Score = player2Score + 1;
+    NSString *str = [NSString stringWithFormat:@"Player 2: %d", player2Score];
+    player2ScoreLabel.text = str;
 }
 
 @end

@@ -22,6 +22,11 @@
 	
 	Paddle * paddle1;
 	Paddle * paddle2;
+
+    NSInteger *player1Score;
+    NSInteger *player2Score;
+    IBOutlet UILabel *player1ScoreLabel;
+    IBOutlet UILabel *player2ScoreLabel;
 }
 
 - (void)addNewBall:(cpVect)position :(cpVect)velocity;
