@@ -15,15 +15,21 @@
 #define THICKNESSX  60.0f
 #define THICKNESSY  25.0f
 
+// seconds
+#define WAVEINTERVAL 2.0
+
 
 @implementation Wave
 
 @synthesize chipmunkObjects;
+@synthesize waveIntervalOffset;
 
 - (void)updatePosition 
 {
 	// Sync ball positon with chipmunk body
 	self.transform=CGAffineTransformMakeTranslation(body.pos.x - THICKNESSX, body.pos.y - THICKNESSY);
+    
+    [self setNeedsDisplay];
 }
 
 - (void) drawRect: (CGRect)rect
@@ -41,8 +47,11 @@
     CGContextSetStrokeColorWithColor(ctx,color);
     CGContextMoveToPoint(ctx, 0, THICKNESSY*.5);
     
-    CGContextAddCurveToPoint(ctx, THICKNESSX/6.0,THICKNESSY*.9, THICKNESSX*2.0/6.0,THICKNESSY*.1, THICKNESSX*.5,THICKNESSY*.5);
-    CGContextAddCurveToPoint(ctx, THICKNESSX*4.0/6.0,THICKNESSY*.9, THICKNESSX*5.0/6.0,THICKNESSY*.7, THICKNESSX,THICKNESSY*.5);
+    double waveMul=(fmodf(CACurrentMediaTime()+self.waveIntervalOffset,WAVEINTERVAL))/WAVEINTERVAL; 
+    
+    
+    CGContextAddCurveToPoint(ctx, THICKNESSX/6.0,waveMul*THICKNESSY, THICKNESSX*2.0/6.0,(1.0-waveMul)*THICKNESSY, THICKNESSX*.5,THICKNESSY*.5);
+    CGContextAddCurveToPoint(ctx, THICKNESSX*4.0/6.0,waveMul*THICKNESSY, THICKNESSX*5.0/6.0,(1.0-waveMul)*THICKNESSY, THICKNESSX,THICKNESSY*.5);
     
     CGContextSetLineWidth(ctx, 2);
     CGContextStrokePath(ctx);
@@ -64,6 +73,9 @@
         
         self.frame=CGRectMake(60,60,60,60);
         self.opaque=false;
+        arc4random_stir();
+        
+        self.waveIntervalOffset=fmod(arc4random(),WAVEINTERVAL);
 		
 		cpFloat moment = cpMomentForCircle(mass, 0, THICKNESSX, offset);
 		
