@@ -18,10 +18,12 @@
 	ChipmunkBody *body;
 	NSSet *chipmunkObjects;
     float waveIntervalOffset;
+    cpVect unitVel;
 }
 
 @property (readonly) NSSet *chipmunkObjects;
 - (id)initWithPosition:(cpVect)position Dimensions:(cpVect)dimensions Velocity:(cpVect)velocity;
 @property float waveIntervalOffset;
+@property cpVect unitVel;
 - (void)updatePosition;
 @end
