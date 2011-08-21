@@ -12,7 +12,9 @@
 #define ELASTICITY 1.0f
 #define FRICTION   0.0f
 #define MASS       1.0f
-#define THICKNESS  20.0f
+#define THICKNESSX  60.0f
+#define THICKNESSY  25.0f
+
 
 @implementation Wave
 
@@ -21,7 +23,7 @@
 - (void)updatePosition 
 {
 	// Sync ball positon with chipmunk body
-	self.transform=CGAffineTransformMakeTranslation(body.pos.x - THICKNESS, body.pos.y - THICKNESS);
+	self.transform=CGAffineTransformMakeTranslation(body.pos.x - THICKNESSX, body.pos.y - THICKNESSY);
 }
 
 - (void) drawRect: (CGRect)rect
@@ -37,10 +39,10 @@
     CGColorSpaceRelease(rgb);
     
     CGContextSetStrokeColorWithColor(ctx,color);
-    CGContextMoveToPoint(ctx, 0, 30);
+    CGContextMoveToPoint(ctx, 0, THICKNESSY*.5);
     
-    CGContextAddCurveToPoint(ctx, 10,45, 20,15, 30,30);
-    CGContextAddCurveToPoint(ctx, 40,45, 50,15, 60,30);
+    CGContextAddCurveToPoint(ctx, THICKNESSX/6.0,THICKNESSY*.9, THICKNESSX*2.0/6.0,THICKNESSY*.1, THICKNESSX*.5,THICKNESSY*.5);
+    CGContextAddCurveToPoint(ctx, THICKNESSX*4.0/6.0,THICKNESSY*.9, THICKNESSX*5.0/6.0,THICKNESSY*.7, THICKNESSX,THICKNESSY*.5);
     
     CGContextSetLineWidth(ctx, 2);
     CGContextStrokePath(ctx);
@@ -63,13 +65,13 @@
         self.frame=CGRectMake(60,60,60,60);
         self.opaque=false;
 		
-		cpFloat moment = cpMomentForCircle(mass, 0, THICKNESS, offset);
+		cpFloat moment = cpMomentForCircle(mass, 0, THICKNESSX, offset);
 		
 		body = [[ChipmunkBody alloc] initWithMass:mass andMoment:moment];
 		body.pos = position;
 		body.vel = velocity;
 		
-		ChipmunkShape *shape = [ChipmunkCircleShape circleWithBody:body radius:THICKNESS offset:offset];
+		ChipmunkShape *shape = [ChipmunkCircleShape circleWithBody:body radius:THICKNESSX offset:offset];
 		
 		// So it will bounce forever
 		shape.elasticity = ELASTICITY;
