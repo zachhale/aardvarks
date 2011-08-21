@@ -1,5 +1,6 @@
 #import "MCPongViewController.h"
 #import "SimpleSound.h"
+#import "chipmunk.h"
 
 #define TEST_BALL_COUNT 200
 
@@ -18,8 +19,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
     self.view.multipleTouchEnabled = YES;
 	
 	// Setup boundary at screen edges
-	[space addBounds:self.view.bounds thickness:10.0f elasticity:1.0f friction:1.0f 
-			  layers:CP_ALL_LAYERS group:CP_NO_GROUP collisionType:borderType];
+    [self createBounds];
 	
 	// Collision handler for ball - border
 	[space addCollisionHandler:self
@@ -41,7 +41,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 	
 	CGRect frame = self.view.frame;
 	
-	cpVect position = cpv(rand() % (int)frame.size.width, rand() % (int)frame.size.height);
+	cpVect position = cpv(frame.size.width/2, frame.size.height/2);
 	cpVect velocity = cpvmult(cpv(frand_unit(), frand_unit()), 400.0f);
 	[self addNewBall:position :velocity];
 	
@@ -204,5 +204,31 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
 		
 }
 
+- (void)createBounds {
+	CGRect frame = self.view.frame;
+    cpFloat radius = 10.0;
+    
+    // left shape
+    ChipmunkBody *leftBody = [[ChipmunkBody alloc] initStaticBody];
+    leftBody.mass = 9999999.0;
+    cpVect leftStart = cpv(0, 0);
+    cpVect leftEnd = cpv(0,frame.size.height);	
+    ChipmunkSegmentShape *leftSegment = [ChipmunkSegmentShape segmentWithBody:leftBody from:leftStart to:leftEnd radius:radius];
+    leftSegment.elasticity = 1.0f;
+    leftSegment.friction = 0.0f;
+    [space addStaticShape:leftSegment];
+    [leftBody release];
+
+    // right shape
+    ChipmunkBody *rightBody = [[ChipmunkBody alloc] initStaticBody];
+    rightBody.mass = 9999999.0;
+    cpVect rightStart = cpv(frame.size.width, 0);
+    cpVect rightEnd = cpv(frame.size.width, frame.size.height);	
+    ChipmunkSegmentShape *rightSegment = [ChipmunkSegmentShape segmentWithBody:rightBody from:rightStart to:rightEnd radius:radius];
+    rightSegment.elasticity = 1.0f;
+    rightSegment.friction = 0.0f;
+    [space addStaticShape:rightSegment];
+    [rightBody release];
+}
 
 @end

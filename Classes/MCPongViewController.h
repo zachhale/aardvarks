@@ -25,5 +25,6 @@
 }
 
 - (void)addNewBall:(cpVect)position :(cpVect)velocity;
+- (void)createBounds;
 
 @end
