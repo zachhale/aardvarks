@@ -44,7 +44,7 @@
 		shape.collisionType = [Ball class];
 		shape.data = self;
 		
-		chipmunkObjects = [ChipmunkObjectFlatten(body, shape, nil) retain];
+		chipmunkObjects = [ChipmunkObjectFlatten(body, shape, nil) retain];        
 	}
 	
 	return self;

@@ -225,7 +225,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
     CGRect frame = self.view.frame;
 
     cpVect position = cpv(frame.size.width/2, frame.size.height/2);
-	cpVect velocity = cpvmult(cpv(frand_unit(), frand_unit()), 400.0f);
+	cpVect velocity = cpvmult(cpv(frand_unit(), frand_unit()), 1000.0f);
 	[self addNewBall:position :velocity];
 }
 
