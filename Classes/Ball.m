@@ -18,7 +18,7 @@
 {
 	if(self = [super init])
 	{
-		UIImage *image = [UIImage imageNamed:@"ball.png"];		
+		UIImage *image = [UIImage imageNamed:@"buoy.png"];		
 		imageView = [[UIImageView alloc] initWithImage:image];
 		
 		// Set up Chipmunk objects.
