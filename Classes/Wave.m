@@ -59,7 +59,7 @@
     
 }
 
-- (id)initWithPosition:(cpVect)position Dimensions:(cpVect)paddleDimensions Velocity:(cpVect)velocity
+- (id)initWithPosition:(cpVect)position Dimensions:(cpVect)waveDims Velocity:(cpVect)velocity
 {
 	if(self = [super init])
 	{	
@@ -71,7 +71,7 @@
 		offset.x = 0;
 		offset.y = 0;
         
-        cpVect hDims = cpvmult(paddleDimensions, 0.5);
+        cpVect hDims = cpvmult(waveDims, 0.5);
         
         float velocityNorm = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
         cpVect unitVel = cpvmult(velocity, 1 / velocityNorm);
