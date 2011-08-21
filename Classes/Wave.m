@@ -10,6 +10,7 @@
 #import "Wave.h"
 #import <QuartzCore/QuartzCore.h>
 
+#define AMPLITUDE  0.75f
 #define ELASTICITY 1.0f
 #define FRICTION   0.0f
 #define MASS       1.0f
@@ -25,6 +26,7 @@
 
 @synthesize chipmunkObjects;
 @synthesize waveIntervalOffset;
+@synthesize unitVel;
 
 - (void)updatePosition 
 {
@@ -49,7 +51,8 @@
     CGContextSetStrokeColorWithColor(ctx,color);
     CGContextMoveToPoint(ctx, 0, THICKNESSY*.5);
     
-    double waveMul=(fmodf(CACurrentMediaTime()+self.waveIntervalOffset,WAVEINTERVAL))/WAVEINTERVAL; 
+    // double waveMul=(fmodf(CACurrentMediaTime()+self.waveIntervalOffset,WAVEINTERVAL))/WAVEINTERVAL;
+    double waveMul = AMPLITUDE * sin(CACurrentMediaTime()+self.waveIntervalOffset + (int) self);
     
     CGContextAddCurveToPoint(ctx, THICKNESSX/6.0,waveMul*THICKNESSY, THICKNESSX*2.0/6.0,(1.0-waveMul)*THICKNESSY, THICKNESSX*.5,THICKNESSY*.5);
     CGContextAddCurveToPoint(ctx, THICKNESSX*4.0/6.0,waveMul*THICKNESSY, THICKNESSX*5.0/6.0,(1.0-waveMul)*THICKNESSY, THICKNESSX,THICKNESSY*.5);
@@ -74,7 +77,7 @@
         cpVect hDims = cpvmult(waveDims, 0.5);
         
         float velocityNorm = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-        cpVect unitVel = cpvmult(velocity, 1 / velocityNorm);
+        unitVel = cpvmult(velocity, 1 / velocityNorm);
                 
         cpVect verts[4];
         verts[0] = cpv(     hDims.x,      hDims.y);
