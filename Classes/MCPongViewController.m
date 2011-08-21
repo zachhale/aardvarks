@@ -2,7 +2,7 @@
 #import "SimpleSound.h"
 #import "chipmunk.h"
 
-#define DAMPENING 0.005  // dampening per physics round
+#define DAMPENING 0.0005  // dampening per physics round
 #define PADDLE_WIDTH 110.0
 #define PADDLE_HEIGHT 32.0
 #define PADDLE1_Y 68.0
@@ -237,7 +237,7 @@ static cpFloat frand_unit(){return 2.0f*((cpFloat)rand()/(cpFloat)RAND_MAX) - 1.
             cpVect velocity = cpvsub(point, prevPoint);
             
             // Previously, velocity was random: 3rd arg was: cpv(0,fmod( arc4random(),300)-150.0)];
-            [self addNewWave: cpv(point.x,point.y): cpv(100,2): velocity];
+            [self addNewWave: cpv(point.x,point.y): cpv(100,2): cpvmult(velocity, 25.0)];
         }
 	}
 }
